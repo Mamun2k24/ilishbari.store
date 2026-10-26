@@ -80,6 +80,7 @@ const allowedOrigins = [
   "http://localhost:5173",
     "https://ilishbari.store",
       "https://www.ilishbari.store",
+      "https://ilishbari-stroe.vercel.app",
 
  
 ];
