@@ -68,6 +68,22 @@ const landingPageSchema = new Schema(
     },
     // Content is stored separately from the existing checkout settings.
     content: {
+
+      // 🎁 Dynamic Combo Offer Banner
+  comboBanner: {
+    enabled: {
+      type: Boolean,
+      default: false,
+    },
+    image: {
+      type: String,
+      default: "",
+    },
+    alt: {
+      type: String,
+      default: "৩ জারের কম্বো অফার মাত্র ৯৯৯ টাকা",
+    },
+  },
       sectionVisibility: {
         hero: { type: Boolean, default: true },
         problem: { type: Boolean, default: true },
