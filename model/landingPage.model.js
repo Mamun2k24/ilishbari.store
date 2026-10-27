@@ -68,6 +68,17 @@ const landingPageSchema = new Schema(
     },
     // Content is stored separately from the existing checkout settings.
     content: {
+      sectionVisibility: {
+        hero: { type: Boolean, default: true },
+        problem: { type: Boolean, default: true },
+        features: { type: Boolean, default: true },
+        product: { type: Boolean, default: true },
+        benefits: { type: Boolean, default: true },
+        reviews: { type: Boolean, default: true },
+        video: { type: Boolean, default: true },
+        offer: { type: Boolean, default: true },
+        checkout: { type: Boolean, default: true },
+      },
       problemTitle: { type: String, default: "সমস্যা ও সমাধান" },
       problems: [{ type: String, trim: true }],
       solutions: [{ type: String, trim: true }],
@@ -366,6 +377,19 @@ const landingPageSchema = new Schema(
       shipping:{
         type:Boolean,
         default:true,
+      },
+
+      // Per-landing-page delivery charges (BDT)
+      deliveryChargeInsideDhaka: {
+        type: Number,
+        default: 60,
+        min: 0,
+      },
+
+      deliveryChargeOutsideDhaka: {
+        type: Number,
+        default: 120,
+        min: 0,
       }
 
     },

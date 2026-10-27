@@ -944,28 +944,50 @@ export const updateProductById = async (req, res) => {
     ========================= */
 
     if ("preBook" in body) {
-      const preBook = body.preBook || {};
+      const incoming = body.preBook;
+      if (!incoming || typeof incoming !== "object" || Array.isArray(incoming)) {
+        errors.preBook = { message: "Invalid pre-book settings" };
+      } else {
+        // Preserve server-managed booking count and any fields omitted by the form.
+        const current = product.preBook?.toObject?.() ?? product.preBook ?? {};
+        const next = { ...current };
 
-      update.preBook = {
-        enabled: Boolean(preBook.enabled),
+        for (const key of ["enabled", "requireAdvancePayment", "closed"]) {
+          if (Object.prototype.hasOwnProperty.call(incoming, key)) {
+            if (typeof incoming[key] !== "boolean") {
+              errors[`preBook.${key}`] = { message: `${key} must be a boolean` };
+            } else {
+              next[key] = incoming[key];
+            }
+          }
+        }
 
-        expectedDeliveryDate: preBook.expectedDeliveryDate
-          ? new Date(preBook.expectedDeliveryDate)
-          : null,
+        for (const key of ["limit", "advancePercentage"]) {
+          if (Object.prototype.hasOwnProperty.call(incoming, key)) {
+            const value = Number(incoming[key]);
+            const max = key === "advancePercentage" ? 100 : Infinity;
+            if (!Number.isFinite(value) || value < 0 || value > max ||
+                (key === "limit" && !Number.isInteger(value))) {
+              errors[`preBook.${key}`] = { message: `Invalid ${key}` };
+            } else {
+              next[key] = value;
+            }
+          }
+        }
 
-        limit: Number(preBook.limit || 0),
+        if (Object.prototype.hasOwnProperty.call(incoming, "expectedDeliveryDate")) {
+          const raw = incoming.expectedDeliveryDate;
+          const date = raw ? new Date(raw) : null;
+          if (date && Number.isNaN(date.getTime())) {
+            errors["preBook.expectedDeliveryDate"] = { message: "Invalid delivery date" };
+          } else {
+            next.expectedDeliveryDate = date;
+          }
+        }
 
-        // কতজন pre-book করেছে
-        bookedCount: Number(preBook.bookedCount || 0),
-
-        // optional advance payment setting
-        requireAdvancePayment: Boolean(preBook.requireAdvancePayment),
-
-        advancePercentage: Number(preBook.advancePercentage || 0),
-
-        // pre-book manually বন্ধ করার জন্য
-        closed: Boolean(preBook.closed),
-      };
+        // bookedCount is managed by the server, never by the product edit form.
+        update.preBook = next;
+      }
     }
 
     /* =========================
