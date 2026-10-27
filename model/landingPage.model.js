@@ -91,11 +91,12 @@ const landingPageSchema = new Schema(
       ctaDescription: { type: String, default: "বিশেষ অফারটি মিস করবেন না" },
       footerText: { type: String, default: "" },
     },
-    testimonials: [{
-      name: { type: String, default: "" },
-      comment: { type: String, default: "" },
-      rating: { type: Number, min: 1, max: 5, default: 5 },
-    }],
+  testimonials: [{
+  name: { type: String, default: "" },
+  image: { type: String, default: "" },
+  comment: { type: String, default: "" },
+  rating: { type: Number, min: 1, max: 5, default: 5 },
+}],
 
     // =========================
     // Hero Section
